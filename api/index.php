@@ -1,8 +1,8 @@
 <?php
 
-// Force storage & logs to /tmp (writeable in Vercel)
-putenv("VIEW_COMPILED_PATH=/tmp/storage/framework/views");
+// Force log to stderr (Vercel compatible)
 putenv("LOG_CHANNEL=stderr");
+putenv("VIEW_COMPILED_PATH=/tmp/storage/framework/views");
 
 // Ensure tmp storage directories exist
 $storagePath = '/tmp/storage/framework';
@@ -13,5 +13,4 @@ foreach ($folders as $folder) {
     }
 }
 
-// Memuat bootstraper utama Laravel
 require __DIR__ . '/../public/index.php';
