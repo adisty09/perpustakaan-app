@@ -2,63 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengarang;
 use Illuminate\Http\Request;
 
 class PengarangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $pengarangs = Pengarang::paginate(10);
+        return view('pengarang.index', compact('pengarangs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $lastId = Pengarang::max('idPengarang');
+        $newId = $lastId ? 'PG' . str_pad((intval(substr($lastId, 2)) + 1), 3, '0', STR_PAD_LEFT) : 'PG001';
+        return view('pengarang.create', compact('newId'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'idPengarang' => 'required|unique:pengarangs|max:5',
+            'nama' => 'required|max:50',
+            'negara' => 'nullable|max:30',
+            'tgl_lahir' => 'nullable|date',
+        ]);
+
+        Pengarang::create($request->all());
+        return redirect()->route('pengarang.index')->with('success', 'Pengarang berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $pengarang = Pengarang::findOrFail($id);
+        return view('pengarang.show', compact('pengarang'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        $pengarang = Pengarang::findOrFail($id);
+        return view('pengarang.edit', compact('pengarang'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nama' => 'required|max:50',
+            'negara' => 'nullable|max:30',
+            'tgl_lahir' => 'nullable|date',
+        ]);
+
+        $pengarang = Pengarang::findOrFail($id);
+        $pengarang->update($request->all());
+        return redirect()->route('pengarang.index')->with('success', 'Pengarang berhasil diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $pengarang = Pengarang::findOrFail($id);
+        
+        // Cek apakah pengarang masih digunakan di buku
+        if ($pengarang->bukus()->count() > 0) {
+            return redirect()->route('pengarang.index')->with('error', 'Pengarang tidak dapat dihapus karena masih memiliki buku!');
+        }
+        
+        $pengarang->delete();
+        return redirect()->route('pengarang.index')->with('success', 'Pengarang berhasil dihapus');
     }
 }
