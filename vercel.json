@@ -1,8 +1,6 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "regions": [
-        "hnd1"
-    ],
+    "regions": ["hnd1"],
     "builds": [
         {
             "src": "/api/index.php",
@@ -15,24 +13,24 @@
     ],
     "routes": [
         {
-            "src": "/build/assets/(.*)",
-            "dest": "/public/build/assets/$1"
-        },
-        {
-            "src": "/favicon.(.*)",
-            "dest": "/public/favicon.$1"
-        },
-        {
-            "src": "/apple-touch-icon.png",
-            "dest": "/public/apple-touch-icon.png"
-        },
-        {
-            "src": "/robots.txt",
-            "dest": "/public/robots.txt"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
+            "functions": {
+                "api/index.php": {
+                    "runtime": "vercel-php@0.6.0",
+                    "maxDuration": 10
+                }
+            },
+            "routes": [
+                {
+                    "src": "/(.*)",
+                    "dest": "/api/index.php"
+                }
+            ],
+            "build": {
+                "env": {
+                    "APP_ENV": "production",
+                    "APP_DEBUG": "false"
+                }
+            }
         }
     ],
     "env": {
