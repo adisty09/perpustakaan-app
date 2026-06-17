@@ -38,7 +38,7 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/apache2.conf
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8080
 
 # Start Apache
 CMD ["apache2-foreground"]
