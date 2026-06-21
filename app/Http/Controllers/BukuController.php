@@ -74,16 +74,20 @@ class BukuController extends Controller
         return view('buku.show', compact('buku'));
     }
 
+    // ============================================================
+    // INI YANG DIPERBAIKI (edit)
+    // ============================================================
     public function edit($id)
     {
         $buku = Buku::with(['pengarangs', 'rakBukus'])->findOrFail($id);
-        $penerbit = Penerbit::all();
-        $jenisBuku = JenisBuku::all();
-        $pengarang = Pengarang::all();
-        $rakBuku = RakBuku::all();
+        $penerbits = Penerbit::all();      // ← DIPERBAIKI (pakai s)
+        $jenisBukus = JenisBuku::all();    // ← DIPERBAIKI (pakai s)
+        $pengarangs = Pengarang::all();    // ← DIPERBAIKI (pakai s)
+        $rakBukus = RakBuku::all();        // ← DIPERBAIKI (pakai s)
 
-        return view('buku.edit', compact('buku', 'penerbit', 'jenisBuku', 'pengarang', 'rakBuku'));
+        return view('buku.edit', compact('buku', 'penerbits', 'jenisBukus', 'pengarangs', 'rakBukus'));
     }
+
     public function update(Request $request, $id)
     {
         $request->validate([
