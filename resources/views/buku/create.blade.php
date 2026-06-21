@@ -73,7 +73,7 @@
                                 <select name="idPenerbit" class="form-select" required>
                                     <option value="">Pilih Penerbit</option>
                                     @foreach($penerbits as $penerbit)
-                                        <option value="{{ $penerbit->idPenerbit }}">{{ $penerbit->namaPenerbit }}</option>
+                                        <option value="{{ $penerbit->idPenerbit }}">{{ $penerbit->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -98,7 +98,7 @@
                                 <select name="idPengarang" class="form-select">
                                     <option value="">Pilih Pengarang</option>
                                     @foreach($pengarangs as $pengarang)
-                                        <option value="{{ $pengarang->idPengarang }}">{{ $pengarang->namaPengarang }}</option>
+                                        <option value="{{ $pengarang->idPengarang }}">{{ $pengarang->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -109,7 +109,7 @@
                                 <select name="idRak" class="form-select">
                                     <option value="">Pilih Rak Buku</option>
                                     @foreach($rakBukus as $rak)
-                                        <option value="{{ $rak->idRak }}">{{ $rak->namaRak }}</option>
+                                        <option value="{{ $rak->idRak }}">{{ $rak->kodeRak }}</option>
                                     @endforeach
                                 </select>
                             </div>
