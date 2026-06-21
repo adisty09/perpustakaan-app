@@ -1,6 +1,6 @@
-FROM php:8.3-apache
+FROM php:8.3-fpm
 
-# Install system dependencies
+# Install system dependencies dan Nginx
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
+    nginx \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -30,17 +31,20 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# ===============================
-# PERBAIKAN MPM APACHE - CLEAN
-# ===============================
-# Hapus semua konfigurasi MPM yang ada
-RUN rm -f /etc/apache2/mods-enabled/mpm_*.load
+# Konfigurasi Nginx
+RUN echo "server { \
+    listen 8080; \
+    root /var/www/html/public; \
+    index index.php index.html; \
+    location / { \
+        try_files \$uri \$uri/ /index.php?\$query_string; \
+    } \
+    location ~ \.php$ { \
+        fastcgi_pass 127.0.0.1:9000; \
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name; \
+        include fastcgi_params; \
+    } \
+}" > /etc/nginx/sites-enabled/default
 
-# Enable mod_rewrite
-RUN a2enmod rewrite
-
-# Configure Apache document root ke public
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
-
-EXPOSE 8080
-CMD ["apache2-foreground"]
+# Start PHP-FPM dan Nginx
+CMD php-fpm -D && nginx -g 'daemon off;'
