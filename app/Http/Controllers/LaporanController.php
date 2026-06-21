@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
+    // Buku Terpopuler → view: laporan.index
     public function bukuTerpopuler()
     {
         $bukus = DB::select("
@@ -17,13 +18,15 @@ class LaporanController extends Controller
             LIMIT 10
         ");
         
-        return view('laporan.buku-terpopuler', compact('bukus'));
+        return view('laporan.index', compact('bukus'));
     }
     
+    // Denda per Anggota
     public function dendaPerAnggota()
     {
         $dendas = DB::select("
-            SELECT a.idAnggota, a.nama, COUNT(p.idPeminjaman) as total_pinjam, COALESCE(SUM(pg.dendaDibayar), 0) as total_denda
+            SELECT a.idAnggota, a.nama, COUNT(p.idPeminjaman) as total_pinjam, 
+                   COALESCE(SUM(pg.dendaDibayar), 0) as total_denda
             FROM anggotas a
             LEFT JOIN peminjamans p ON a.idAnggota = p.idAnggota
             LEFT JOIN pengembalians pg ON p.idPeminjaman = pg.idPeminjaman
@@ -34,6 +37,7 @@ class LaporanController extends Controller
         return view('laporan.denda-per-anggota', compact('dendas'));
     }
     
+    // Peminjaman Bulanan → view: laporan.bulanan
     public function peminjamanBulanan()
     {
         $peminjamanPerBulan = DB::select("
@@ -44,6 +48,6 @@ class LaporanController extends Controller
             ORDER BY bulan ASC
         ");
         
-        return view('laporan.peminjaman-bulanan', compact('peminjamanPerBulan'));
+        return view('laporan.bulanan', compact('peminjamanPerBulan'));
     }
 }

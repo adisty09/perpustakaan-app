@@ -41,15 +41,15 @@
                         @enderror
                     </div>
 
-                    {{-- PENGARANG (TANPA 's') --}}
+                    {{-- PENGARANG --}}
                     <div class="mb-3">
                         <label class="form-label">Pengarang</label>
                         <select name="idPengarang" class="form-control @error('idPengarang') is-invalid @enderror">
                             <option value="">Pilih Pengarang</option>
-                            @foreach($pengarang as $pengarang)
-                                <option value="{{ $pengarang->idPengarang }}" 
-                                    {{ old('idPengarang', $buku->idPengarang) == $pengarang->idPengarang ? 'selected' : '' }}>
-                                    {{ $pengarang->namaPengarang }}
+                            @foreach($pengarang as $pgr)
+                                <option value="{{ $pgr->idPengarang }}" 
+                                    {{ old('idPengarang', $buku->idPengarang) == $pgr->idPengarang ? 'selected' : '' }}>
+                                    {{ $pgr->nama }}
                                 </option>
                             @endforeach
                         </select>
@@ -58,15 +58,15 @@
                         @enderror
                     </div>
 
-                    {{-- PENERBIT (TANPA 's') --}}
+                    {{-- PENERBIT --}}
                     <div class="mb-3">
                         <label class="form-label">Penerbit</label>
                         <select name="idPenerbit" class="form-control @error('idPenerbit') is-invalid @enderror">
                             <option value="">Pilih Penerbit</option>
-                            @foreach($penerbit as $penerbit)
-                                <option value="{{ $penerbit->idPenerbit }}" 
-                                    {{ old('idPenerbit', $buku->idPenerbit) == $penerbit->idPenerbit ? 'selected' : '' }}>
-                                    {{ $penerbit->namaPenerbit }}
+                            @foreach($penerbit as $pnb)
+                                <option value="{{ $pnb->idPenerbit }}" 
+                                    {{ old('idPenerbit', $buku->idPenerbit) == $pnb->idPenerbit ? 'selected' : '' }}>
+                                    {{ $pnb->nama }}
                                 </option>
                             @endforeach
                         </select>
@@ -75,7 +75,7 @@
                         @enderror
                     </div>
 
-                    {{-- JENIS BUKU (TANPA 's') --}}
+                    {{-- JENIS BUKU --}}
                     <div class="mb-3">
                         <label class="form-label">Jenis Buku</label>
                         <select name="idJenis" class="form-control @error('idJenis') is-invalid @enderror">
@@ -92,7 +92,7 @@
                         @enderror
                     </div>
 
-                    {{-- RAK BUKU (TANPA 's') --}}
+                    {{-- RAK BUKU --}}
                     <div class="mb-3">
                         <label class="form-label">Rak Buku</label>
                         <select name="idRak" class="form-control @error('idRak') is-invalid @enderror">
@@ -100,7 +100,7 @@
                             @foreach($rakBuku as $rak)
                                 <option value="{{ $rak->idRak }}" 
                                     {{ old('idRak', $buku->idRak) == $rak->idRak ? 'selected' : '' }}>
-                                    {{ $rak->namaRak }}
+                                    {{ $rak->kodeRak }}
                                 </option>
                             @endforeach
                         </select>
@@ -118,6 +118,16 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    {{-- Stok Tersedia --}}
+                     <div class="mb-3">
+                        <label class="form-label">Stok Tersedia <span class="text-danger">*</span></label>
+                        <input type="number" name="stok_tersedia" class="form-control @error('stok_tersedia') is-invalid @enderror" 
+                               value="{{ old('stok_tersedia', $buku->stok_tersedia) }}" min="0" required>
+                        @error('stok_tersedia')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
 
                     {{-- Tahun Terbit --}}
                     <div class="mb-3">

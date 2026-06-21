@@ -22,7 +22,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Tanggal Pinjam</label>
-                                <input type="text" class="form-control" value="{{ date('d/m/Y') }}" readonly>
+                                <input type="date" class="form-control" value="{{ date('Y-m-d') }}" required>
                                 <small class="text-muted">Masa pinjam: 7 hari</small>
                             </div>
                         </div>
