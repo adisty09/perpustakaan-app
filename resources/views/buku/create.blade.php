@@ -1,13 +1,13 @@
 @extends('main')
 
-@section('title', 'Edit Buku')
+@section('title', 'Tambah Buku')
 
 @section('content')
 <div class="row">
-    <div class="col-md-6 mx-auto">
+    <div class="col-md-8 mx-auto">
         <div class="card">
             <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Form Edit Buku</h5>
+                <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Form Tambah Buku</h5>
             </div>
             <div class="card-body">
                 @if ($errors->any())
@@ -20,129 +20,105 @@
                     </div>
                 @endif
 
-                <form action="{{ route('buku.update', $buku->idBuku) }}" method="POST">
+                {{-- FORM TAMBAH BUKU (BUKAN EDIT) --}}
+                <form action="{{ route('buku.store') }}" method="POST">
                     @csrf
-                    @method('PUT')
+                    {{-- @method('PUT') TIDAK PAKAI! --}}
 
-                    {{-- Kode Buku --}}
-                    <div class="mb-3">
-                        <label class="form-label">Kode Buku</label>
-                        <input type="text" class="form-control bg-light" value="{{ $buku->idBuku }}" readonly>
-                        <input type="hidden" name="idBuku" value="{{ $buku->idBuku }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">ID Buku</label>
+                                <input type="text" name="idBuku" class="form-control" value="{{ $newId }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">ISBN</label>
+                                <input type="text" name="isbn" class="form-control">
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Judul Buku --}}
                     <div class="mb-3">
                         <label class="form-label">Judul Buku <span class="text-danger">*</span></label>
-                        <input type="text" name="judul" class="form-control @error('judul') is-invalid @enderror" 
-                               value="{{ old('judul', $buku->judul) }}" required>
-                        @error('judul')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <input type="text" name="judul" class="form-control" required>
                     </div>
 
-                    {{-- PENGARANG (TANPA 's') --}}
-                    <div class="mb-3">
-                        <label class="form-label">Pengarang</label>
-                        <select name="idPengarang" class="form-control @error('idPengarang') is-invalid @enderror">
-                            <option value="">Pilih Pengarang</option>
-                            @foreach($pengarang as $pengarang)
-                                <option value="{{ $pengarang->idPengarang }}" 
-                                    {{ old('idPengarang', $buku->idPengarang) == $pengarang->idPengarang ? 'selected' : '' }}>
-                                    {{ $pengarang->namaPengarang }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('idPengarang')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Tahun Terbit <span class="text-danger">*</span></label>
+                                <input type="number" name="tahunTerbit" class="form-control" min="1900" max="{{ date('Y') }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Stok Total <span class="text-danger">*</span></label>
+                                <input type="number" name="stok_total" class="form-control" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Stok Tersedia <span class="text-danger">*</span></label>
+                                <input type="number" name="stok_tersedia" class="form-control" min="0" required>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- PENERBIT (TANPA 's') --}}
-                    <div class="mb-3">
-                        <label class="form-label">Penerbit</label>
-                        <select name="idPenerbit" class="form-control @error('idPenerbit') is-invalid @enderror">
-                            <option value="">Pilih Penerbit</option>
-                            @foreach($penerbit as $penerbit)
-                                <option value="{{ $penerbit->idPenerbit }}" 
-                                    {{ old('idPenerbit', $buku->idPenerbit) == $penerbit->idPenerbit ? 'selected' : '' }}>
-                                    {{ $penerbit->namaPenerbit }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('idPenerbit')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Penerbit <span class="text-danger">*</span></label>
+                                <select name="idPenerbit" class="form-select" required>
+                                    <option value="">Pilih Penerbit</option>
+                                    @foreach($penerbits as $penerbit)
+                                        <option value="{{ $penerbit->idPenerbit }}">{{ $penerbit->namaPenerbit }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Jenis Buku <span class="text-danger">*</span></label>
+                                <select name="idJenis" class="form-select" required>
+                                    <option value="">Pilih Jenis</option>
+                                    @foreach($jenisBukus as $jenis)
+                                        <option value="{{ $jenis->idJenis }}">{{ $jenis->namaJenis }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- JENIS BUKU (TANPA 's') --}}
-                    <div class="mb-3">
-                        <label class="form-label">Jenis Buku</label>
-                        <select name="idJenis" class="form-control @error('idJenis') is-invalid @enderror">
-                            <option value="">Pilih Jenis Buku</option>
-                            @foreach($jenisBuku as $jenis)
-                                <option value="{{ $jenis->idJenis }}" 
-                                    {{ old('idJenis', $buku->idJenis) == $jenis->idJenis ? 'selected' : '' }}>
-                                    {{ $jenis->namaJenis }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('idJenis')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Pengarang</label>
+                                <select name="idPengarang" class="form-select">
+                                    <option value="">Pilih Pengarang</option>
+                                    @foreach($pengarangs as $pengarang)
+                                        <option value="{{ $pengarang->idPengarang }}">{{ $pengarang->namaPengarang }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Rak Buku</label>
+                                <select name="idRak" class="form-select">
+                                    <option value="">Pilih Rak Buku</option>
+                                    @foreach($rakBukus as $rak)
+                                        <option value="{{ $rak->idRak }}">{{ $rak->namaRak }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- RAK BUKU (TANPA 's') --}}
-                    <div class="mb-3">
-                        <label class="form-label">Rak Buku</label>
-                        <select name="idRak" class="form-control @error('idRak') is-invalid @enderror">
-                            <option value="">Pilih Rak Buku</option>
-                            @foreach($rakBuku as $rak)
-                                <option value="{{ $rak->idRak }}" 
-                                    {{ old('idRak', $buku->idRak) == $rak->idRak ? 'selected' : '' }}>
-                                    {{ $rak->namaRak }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('idRak')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Stok --}}
-                    <div class="mb-3">
-                        <label class="form-label">Stok <span class="text-danger">*</span></label>
-                        <input type="number" name="stok_total" class="form-control @error('stok_total') is-invalid @enderror" 
-                               value="{{ old('stok_total', $buku->stok_total) }}" min="0" required>
-                        @error('stok_total')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Tahun Terbit --}}
-                    <div class="mb-3">
-                        <label class="form-label">Tahun Terbit <span class="text-danger">*</span></label>
-                        <input type="number" name="tahunTerbit" class="form-control @error('tahunTerbit') is-invalid @enderror" 
-                               value="{{ old('tahunTerbit', $buku->tahunTerbit) }}" min="1900" max="{{ date('Y') }}" required>
-                        @error('tahunTerbit')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Deskripsi --}}
-                    <div class="mb-3">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea name="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror" 
-                                  rows="2">{{ old('deskripsi', $buku->deskripsi) }}</textarea>
-                        @error('deskripsi')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    {{-- Tombol --}}
                     <div class="d-flex gap-2">
                         <a href="{{ route('buku.index') }}" class="btn btn-secondary">Batal</a>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>
