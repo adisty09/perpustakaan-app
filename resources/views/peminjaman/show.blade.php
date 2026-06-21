@@ -50,13 +50,14 @@
 
                 {{-- Logika & Notifikasi Keterlambatan Real-time --}}
                 @php
-                    $tglJatuhTempo = \Carbon\Carbon::parse($peminjaman->tgl_jatuh_tempo);
+                    $tglJatuhTempo = $peminjaman->tgl_jatuh_tempo;
                     $hariIni = \Carbon\Carbon::now();
                     $dendaPerHari = 1000;
                     $terlambat = 0;
                     $totalDenda = 0;
 
-                    if ($peminjaman->status_pinjam == 'Dipinjam' && $hariIni->gt($tglJatuhTempo)) {
+                    // Menggunakan logika perbandingan bawaan objek tanggal Laravel
+                    if ($peminjaman->status_pinjam == 'Dipinjam' && $tglJatuhTempo && $hariIni->gt($tglJatuhTempo)) {
                         $terlambat = $hariIni->diffInDays($tglJatuhTempo);
                         $totalDenda = $terlambat * $dendaPerHari;
                     }
