@@ -1,4 +1,4 @@
-FROM php:8.3-apache   
+FROM php:8.3-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -30,14 +30,22 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# ===============================
+# PERBAIKAN UNTUK ERROR APACHE MPM
+# ===============================
+# Nonaktifkan semua MPM bawaan
+RUN a2dismod mpm_event mpm_worker
+
+# Aktifkan MPM Prefork (kompatibel dengan PHP)
+RUN a2enmod mpm_prefork
+
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
 # Configure Apache document root ke public
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/apache2.conf
 
-# Expose port 80
+# Expose port
 EXPOSE 8080
 
 # Start Apache
