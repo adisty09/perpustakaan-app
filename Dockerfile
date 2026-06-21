@@ -30,23 +30,21 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# ===============================
-# PERBAIKAN UNTUK ERROR APACHE MPM
-# ===============================
-# Nonaktifkan semua MPM bawaan
-RUN a2dismod mpm_event mpm_worker
+# ============================================================
+# PERBAIKAN ERROR MPM APACHE - VERSI PASTI
+# ============================================================
+# Hapus semua konfigurasi MPM yang ada
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load
+RUN rm -f /etc/apache2/mods-available/mpm_*.load
 
-# Aktifkan MPM Prefork (kompatibel dengan PHP)
+# Aktifkan hanya mpm_prefork
 RUN a2enmod mpm_prefork
 
-# Enable Apache mod_rewrite
+# Enable mod_rewrite
 RUN a2enmod rewrite
 
 # Configure Apache document root ke public
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# Expose port
 EXPOSE 8080
-
-# Start Apache
 CMD ["apache2-foreground"]
