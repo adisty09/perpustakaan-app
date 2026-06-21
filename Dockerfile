@@ -30,15 +30,11 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# ============================================================
-# PERBAIKAN ERROR MPM APACHE - VERSI PASTI
-# ============================================================
+# ===============================
+# PERBAIKAN MPM APACHE - CLEAN
+# ===============================
 # Hapus semua konfigurasi MPM yang ada
 RUN rm -f /etc/apache2/mods-enabled/mpm_*.load
-RUN rm -f /etc/apache2/mods-available/mpm_*.load
-
-# Aktifkan hanya mpm_prefork
-RUN a2enmod mpm_prefork
 
 # Enable mod_rewrite
 RUN a2enmod rewrite
