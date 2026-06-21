@@ -19,13 +19,37 @@
             background: #f0f2f5;
         }
 
+        /* ========================================
+                   SIDEBAR - BISA SCROLL KE BAWAH
+                   ======================================== */
         #sidebar-wrapper {
             width: 280px;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             height: 100vh;
             position: fixed;
+            overflow-y: auto;
+            /* <-- KUNCI: biar bisa scroll */
             transition: all 0.3s;
             z-index: 1040;
+            scroll-behavior: smooth;
+        }
+
+        /* Styling scrollbar biar rapi */
+        #sidebar-wrapper::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
 
         #page-content-wrapper {
@@ -56,18 +80,26 @@
 
         .sidebar-menu .nav-link {
             color: rgba(255, 255, 255, 0.8);
-            padding: 0.75rem 1.5rem;
-            margin: 4px 0;
-            border-radius: 12px;
+            padding: 0.65rem 1.25rem;
+            margin: 2px 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: all 0.2s;
         }
 
         .sidebar-menu .nav-link:hover,
         .sidebar-menu .nav-link.active {
             background: rgba(255, 255, 255, 0.15);
             color: white;
+        }
+
+        .sidebar-menu .collapse .nav-link {
+            padding-left: 3rem !important;
+            font-size: 0.85rem;
         }
 
         .card {
@@ -104,6 +136,9 @@
 
 <body>
     <div id="wrapper">
+        <!-- ========================================
+        SIDEBAR KIRI
+        ======================================== -->
         <div id="sidebar-wrapper">
             <div class="sidebar-brand text-center">
                 <img src="{{ asset('images/building.png') }}" alt="Logo Perpustakaan"
@@ -113,59 +148,90 @@
             </div>
             <nav class="sidebar-menu flex-grow-1">
                 <div class="nav flex-column">
+                    <!-- DASHBOARD -->
                     <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
                         href="{{ route('dashboard') }}">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
+
+                    <!-- ANGGOTA -->
                     <a class="nav-link {{ request()->routeIs('anggota.*') ? 'active' : '' }}"
                         href="{{ route('anggota.index') }}">
                         <i class="bi bi-people"></i> Anggota
                     </a>
+
+                    <!-- BUKU -->
                     <a class="nav-link {{ request()->routeIs('buku.*') ? 'active' : '' }}"
                         href="{{ route('buku.index') }}">
                         <i class="bi bi-book"></i> Buku
                     </a>
+
+                    <!-- PENERBIT -->
                     <a class="nav-link {{ request()->routeIs('penerbit.*') ? 'active' : '' }}"
                         href="{{ route('penerbit.index') }}">
                         <i class="bi bi-building"></i> Penerbit
                     </a>
+
+                    <!-- JENIS BUKU -->
                     <a class="nav-link {{ request()->routeIs('jenis-buku.*') ? 'active' : '' }}"
                         href="{{ route('jenis-buku.index') }}">
                         <i class="bi bi-tags"></i> Jenis Buku
                     </a>
+
+                    <!-- PENGARANG -->
                     <a class="nav-link {{ request()->routeIs('pengarang.*') ? 'active' : '' }}"
                         href="{{ route('pengarang.index') }}">
                         <i class="bi bi-pen"></i> Pengarang
                     </a>
+
+                    <!-- RAK BUKU -->
                     <a class="nav-link {{ request()->routeIs('rak-buku.*') ? 'active' : '' }}"
                         href="{{ route('rak-buku.index') }}">
                         <i class="bi bi-grid-3x3-gap-fill"></i> Rak Buku
                     </a>
+
+                    <!-- PUSTAKAWAN -->
                     <a class="nav-link {{ request()->routeIs('pustakawan.*') ? 'active' : '' }}"
                         href="{{ route('pustakawan.index') }}">
                         <i class="bi bi-person-badge"></i> Pustakawan
                     </a>
+
                     <hr style="border-color: rgba(255,255,255,0.1); margin: 0.5rem 0;">
+
+                    <!-- PEMINJAMAN -->
                     <a class="nav-link {{ request()->routeIs('peminjaman.*') ? 'active' : '' }}"
                         href="{{ route('peminjaman.index') }}">
                         <i class="bi bi-hand-index-thumb"></i> Peminjaman
                     </a>
+
+                    <!-- PENGEMBALIAN -->
                     <a class="nav-link {{ request()->routeIs('pengembalian.*') ? 'active' : '' }}"
                         href="{{ route('pengembalian.index') }}">
                         <i class="bi bi-arrow-return-left"></i> Pengembalian
                     </a>
+
                     <hr style="border-color: rgba(255,255,255,0.1); margin: 0.5rem 0;">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#laporanMenu">
-                        <i class="bi bi-graph-up"></i> Laporan <i class="bi bi-chevron-down float-end"></i>
+
+                    <!-- LAPORAN (DROPDOWN) -->
+                    <a class="nav-link" data-bs-toggle="collapse" href="#laporanMenu" role="button">
+                        <i class="bi bi-graph-up"></i> Laporan
+                        <i class="bi bi-chevron-down float-end"></i>
                     </a>
-                    <div class="collapse ms-3" id="laporanMenu">
-                        <a class="nav-link ps-4" href="{{ route('laporan.buku-terpopuler') }}"><i
-                                class="bi bi-bar-chart"></i> Buku Terpopuler</a>
-                        <a class="nav-link ps-4" href="{{ route('laporan.denda-per-anggota') }}"><i
-                                class="bi bi-cash-stack"></i> Denda per Anggota</a>
+                    <div class="collapse ms-2" id="laporanMenu">
+                        <a class="nav-link ps-4" href="{{ route('laporan.buku-terpopuler') }}">
+                            <i class="bi bi-bar-chart"></i> Buku Terpopuler
+                        </a>
+                        <a class="nav-link ps-4" href="{{ route('laporan.denda-per-anggota') }}">
+                            <i class="bi bi-cash-stack"></i> Denda per Anggota
+                        </a>
+                        <a class="nav-link ps-4" href="{{ route('laporan.peminjaman-bulanan') }}">
+                            <i class="bi bi-calendar-month"></i> Peminjaman Bulanan
+                        </a>
                     </div>
                 </div>
             </nav>
+
+            <!-- LOGOUT DI BAWAH SIDEBAR -->
             <div class="p-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -176,7 +242,11 @@
             </div>
         </div>
 
+        <!-- ========================================
+        MAIN CONTENT
+        ======================================== -->
         <div id="page-content-wrapper">
+            <!-- NAVBAR ATAS -->
             <nav class="navbar navbar-expand-lg bg-white shadow-sm px-4 py-3 sticky-top">
                 <div class="container-fluid">
                     <button class="btn btn-light d-lg-none border" id="sidebarToggle">
@@ -206,6 +276,8 @@
                     </div>
                 </div>
             </nav>
+
+            <!-- KONTEN UTAMA -->
             <div class="container-fluid px-4 py-4">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show rounded-3">
@@ -213,27 +285,42 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
+
                 @if (session('error'))
                     <div class="alert alert-danger alert-dismissible fade show rounded-3">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
+
                 @yield('content')
             </div>
+
+            <!-- FOOTER -->
             <footer class="text-center text-muted py-3 border-top mt-4">
                 @yield('footer')
                 <p class="mb-0 small">&copy; {{ date('Y') }} Dinas Kearsipan dan Perpustakaan Kota Palembang</p>
             </footer>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- ========================================
+    SCRIPTS
+    ======================================== -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+
     <script>
+        // Toggle sidebar di mobile
         document.getElementById('sidebarToggle')?.addEventListener('click', function() {
             document.getElementById('wrapper').classList.toggle('toggled');
         });
+
+        // Konfirmasi hapus dengan SweetAlert
         document.querySelectorAll('.show_confirm').forEach(el => {
             el.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -254,6 +341,7 @@
             });
         });
     </script>
+
     @stack('scripts')
 </body>
 

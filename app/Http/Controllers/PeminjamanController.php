@@ -39,6 +39,7 @@ class PeminjamanController extends Controller
             'idPeminjaman' => 'required|unique:peminjamans',
             'idAnggota' => 'required|exists:anggotas,idAnggota',
             'idPustakawan' => 'required|exists:pustakawans,idPustakawan',
+            'tgl_pinjam' => 'nullable|date', // Validasi input tanggal opsional dari form
             'bukus' => 'required|array|min:1',
             'bukus.*' => 'exists:bukus,idBuku'
         ]);
@@ -46,7 +47,8 @@ class PeminjamanController extends Controller
         DB::beginTransaction();
         try {
             $lamaPinjam = 7;
-            $tglPinjam = Carbon::now();
+            // Mengambil nilai dari input 'tgl_pinjam' dari form, jika kosong menggunakan waktu sekarang
+            $tglPinjam = Carbon::parse($request->input('tgl_pinjam', Carbon::now()));
             $tglJatuhTempo = $tglPinjam->copy()->addDays($lamaPinjam);
             
             $peminjaman = Peminjaman::create([
@@ -82,6 +84,51 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::with(['anggota', 'pustakawan', 'detailPeminjamans.buku'])
             ->findOrFail($id);
         return view('peminjaman.show', compact('peminjaman'));
+    }
+
+    public function edit($id)
+    {
+        // Mengambil data peminjaman beserta relasi detail buku, anggota, dan pustakawan
+        $peminjaman = Peminjaman::with(['anggota', 'pustakawan', 'detailPeminjamans.buku'])->findOrFail($id);
+        
+        // Mengambil data pendukung untuk pilihan dropdown di form edit
+        $anggotas = Anggota::where('status', 'Aktif')->orderBy('nama')->get();
+        $pustakawans = Pustakawan::orderBy('nama')->get();
+        $bukus = Buku::orderBy('judul')->get();
+
+        return view('peminjaman.edit', compact('peminjaman', 'anggotas', 'pustakawans', 'bukus'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'idAnggota' => 'required|exists:anggotas,idAnggota',
+            'idPustakawan' => 'required|exists:pustakawans,idPustakawan',
+            'tglPinjam' => 'required|date',
+        ]);
+
+        $peminjaman = Peminjaman::findOrFail($id);
+
+        DB::beginTransaction();
+        try {
+            $lamaPinjam = 7;
+            $tglPinjam = Carbon::parse($request->tglPinjam);
+            $tglJatuhTempo = $tglPinjam->copy()->addDays($lamaPinjam);
+
+            // Memperbarui data utama transaksi peminjaman
+            $peminjaman->update([
+                'tglPinjam' => $tglPinjam,
+                'tgl_jatuh_tempo' => $tglJatuhTempo,
+                'idAnggota' => $request->idAnggota,
+                'idPustakawan' => $request->idPustakawan
+            ]);
+
+            DB::commit();
+            return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil diperbarui');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Gagal memperbarui data peminjaman');
+        }
     }
 
     public function destroy($id)

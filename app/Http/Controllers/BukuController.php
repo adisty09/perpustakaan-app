@@ -24,10 +24,10 @@ class BukuController extends Controller
         $jenisBukus = JenisBuku::all();
         $pengarangs = Pengarang::all();
         $rakBukus = RakBuku::all();
-        
+
         $lastId = Buku::max('idBuku');
         $newId = $lastId ? 'BK' . str_pad((intval(substr($lastId, 2)) + 1), 3, '0', STR_PAD_LEFT) : 'BK001';
-        
+
         return view('buku.create', compact('penerbits', 'jenisBukus', 'pengarangs', 'rakBukus', 'newId'));
     }
 
@@ -47,11 +47,11 @@ class BukuController extends Controller
         DB::beginTransaction();
         try {
             $buku = Buku::create($request->all());
-            
+
             if ($request->has('pengarangs')) {
                 $buku->pengarangs()->attach($request->pengarangs);
             }
-            
+
             if ($request->has('rakBukus')) {
                 foreach ($request->rakBukus as $idRak => $jumlah) {
                     if ($jumlah > 0) {
@@ -59,7 +59,7 @@ class BukuController extends Controller
                     }
                 }
             }
-            
+
             DB::commit();
             return redirect()->route('buku.index')->with('success', 'Buku berhasil ditambahkan');
         } catch (\Exception $e) {
@@ -68,16 +68,22 @@ class BukuController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $buku = Buku::with(['penerbit', 'jenisBuku', 'pengarangs', 'rakBukus'])->findOrFail($id);
+        return view('buku.show', compact('buku'));
+    }
+
     public function edit($id)
     {
         $buku = Buku::with(['pengarangs', 'rakBukus'])->findOrFail($id);
-        $penerbits = Penerbit::all();
-        $jenisBukus = JenisBuku::all();
-        $pengarangs = Pengarang::all();
-        $rakBukus = RakBuku::all();
-        return view('buku.edit', compact('buku', 'penerbits', 'jenisBukus', 'pengarangs', 'rakBukus'));
-    }
+        $penerbit = Penerbit::all();
+        $jenisBuku = JenisBuku::all();
+        $pengarang = Pengarang::all();
+        $rakBuku = RakBuku::all();
 
+        return view('buku.edit', compact('buku', 'penerbit', 'jenisBuku', 'pengarang', 'rakBuku'));
+    }
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -92,28 +98,28 @@ class BukuController extends Controller
 
         $buku = Buku::findOrFail($id);
         $buku->update($request->all());
-        
+
         if ($request->has('pengarangs')) {
             $buku->pengarangs()->sync($request->pengarangs);
         }
-        
+
         return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui');
     }
 
     public function destroy($id)
     {
         $buku = Buku::findOrFail($id);
-        
+
         if ($buku->detailPeminjamans()->count() > 0) {
             return redirect()->route('buku.index')->with('error', 'Buku tidak dapat dihapus karena sudah pernah dipinjam!');
         }
-        
+
         $buku->pengarangs()->detach();
         $buku->rakBukus()->detach();
         $buku->delete();
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus');
     }
-    
+
     public function bukuTersedia()
     {
         $bukus = Buku::where('stok_tersedia', '>', 0)->select('idBuku', 'judul', 'stok_tersedia')->get();

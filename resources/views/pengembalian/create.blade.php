@@ -18,8 +18,8 @@
                 </div>
                 
                 <div class="alert {{ $keterlambatanHari > 0 ? 'alert-danger' : 'alert-success' }}">
-                    <strong>Keterlambatan:</strong> {{ $keterlambatanHari }} hari<br>
-                    <strong>Denda:</strong> Rp {{ number_format($denda, 0, ',', '.') }}
+                    <strong>Keterlambatan:</strong> {{ ceil($keterlambatanHari) }} hari<br>
+                    <strong>Denda:</strong> Rp {{ number_format(ceil($keterlambatanHari) * 2000, 0, ',', '.') }}
                 </div>
                 
                 <form action="{{ route('pengembalian.store') }}" method="POST">
@@ -27,8 +27,8 @@
                     <input type="hidden" name="idPeminjaman" value="{{ $peminjaman->idPeminjaman }}">
                     <input type="hidden" name="idPengembalian" value="{{ $newId }}">
                     <input type="hidden" name="tglKembali_real" value="{{ date('Y-m-d') }}">
-                    <input type="hidden" name="keterlambatanHari" value="{{ $keterlambatanHari }}">
-                    <input type="hidden" name="dendaDibayar" value="{{ $denda }}">
+                    <input type="hidden" name="keterlambatanHari" value="{{ ceil($keterlambatanHari) }}">
+                    <input type="hidden" name="dendaDibayar" value="{{ ceil($keterlambatanHari) * 2000 }}">
                     
                     <div class="mb-3">
                         <label class="form-label">Petugas Penerima</label>

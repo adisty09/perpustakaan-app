@@ -47,11 +47,13 @@ Route::middleware('auth')->group(function () {
     Route::get('pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
     Route::get('pengembalian/create/{idPeminjaman}', [PengembalianController::class, 'create'])->name('pengembalian.create');
     Route::post('pengembalian', [PengembalianController::class, 'store'])->name('pengembalian.store');
+    Route::post('/peminjaman/{id}/kembali',[App\Http\Controllers\PeminjamanController::class, 'kembali'])->name('peminjaman.kembali');
 
     // Laporan Routes
     Route::prefix('laporan')->name('laporan.')->group(function () {
         Route::get('buku-terpopuler', [LaporanController::class, 'bukuTerpopuler'])->name('buku-terpopuler');
         Route::get('denda-per-anggota', [LaporanController::class, 'dendaPerAnggota'])->name('denda-per-anggota');
+        Route::get('peminjaman-bulanan', [LaporanController::class, 'peminjamanBulanan'])->name('peminjaman-bulanan'); // ← TAMBAHKAN
     });
 });
 
