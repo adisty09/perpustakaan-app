@@ -46,7 +46,7 @@
                         <label class="form-label">Pengarang</label>
                         <select name="idPengarang" class="form-control @error('idPengarang') is-invalid @enderror">
                             <option value="">Pilih Pengarang</option>
-                            @foreach($pengarang as $pgr)
+                            @foreach($pengarangs as $pgr)
                                 <option value="{{ $pgr->idPengarang }}" 
                                     {{ old('idPengarang', $buku->idPengarang) == $pgr->idPengarang ? 'selected' : '' }}>
                                     {{ $pgr->nama }}
@@ -63,7 +63,7 @@
                         <label class="form-label">Penerbit</label>
                         <select name="idPenerbit" class="form-control @error('idPenerbit') is-invalid @enderror">
                             <option value="">Pilih Penerbit</option>
-                            @foreach($penerbit as $pnb)
+                            @foreach($penerbits as $pnb)
                                 <option value="{{ $pnb->idPenerbit }}" 
                                     {{ old('idPenerbit', $buku->idPenerbit) == $pnb->idPenerbit ? 'selected' : '' }}>
                                     {{ $pnb->nama }}
