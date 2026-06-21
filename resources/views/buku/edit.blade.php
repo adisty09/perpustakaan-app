@@ -80,7 +80,7 @@
                         <label class="form-label">Jenis Buku</label>
                         <select name="idJenis" class="form-control @error('idJenis') is-invalid @enderror">
                             <option value="">Pilih Jenis Buku</option>
-                            @foreach($jenisBuku as $jenis)
+                            @foreach($jenisBukus as $jenis)
                                 <option value="{{ $jenis->idJenis }}" 
                                     {{ old('idJenis', $buku->idJenis) == $jenis->idJenis ? 'selected' : '' }}>
                                     {{ $jenis->namaJenis }}
@@ -97,7 +97,7 @@
                         <label class="form-label">Rak Buku</label>
                         <select name="idRak" class="form-control @error('idRak') is-invalid @enderror">
                             <option value="">Pilih Rak Buku</option>
-                            @foreach($rakBuku as $rak)
+                            @foreach($rakBukus as $rak)
                                 <option value="{{ $rak->idRak }}" 
                                     {{ old('idRak', $buku->idRak) == $rak->idRak ? 'selected' : '' }}>
                                     {{ $rak->kodeRak }}
